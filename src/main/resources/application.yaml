@@ -1,0 +1,19 @@
+server:
+  port: 5004
+
+spring:
+  application:
+    name: content-onboarding-service
+  config:
+    import: optional:configserver:http://localhost:8888
+
+  servlet:
+    multipart:
+      max-file-size: 1GB
+      max-request-size: 1GB
+
+minio:
+  endpoint: http://localhost:9000 # MinIO URL
+  access-key: IpdsZfiQYHdhiRCscYXM
+  secret-key: 64O04OP0DTZJPkmsrZN9dobnVwtvGlfa1154wimp
+  bucket: videos

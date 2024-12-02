@@ -1,28 +1,48 @@
 package com.framepulse.content_onboarding_service.controller;
 
-import com.framepulse.content_onboarding_service.minio.service.MinioService;
+import com.framepulse.content_onboarding_service.dto.ContentOnboardingDto;
+import com.framepulse.content_onboarding_service.entity.ContentOnboarding;
+import com.framepulse.content_onboarding_service.mapper.ContentOnboardingMapper;
+import com.framepulse.content_onboarding_service.service.ContentOnboardingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/content-onboarding")
 public class ContentOnboardingController {
 
     @Autowired
-    private MinioService minioService;
+    private ContentOnboardingService contentOnboardingService;
 
-    @PostMapping("/upload")
-    public ResponseEntity<String> uploadContent(@RequestParam("file")MultipartFile file){
-        try {
-            String fileUrl = minioService.uploadVideo(file);
-            return ResponseEntity.status(200).body("File uploaded successfully: "+fileUrl);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("Error: "+e.getMessage());
-        }
+    @Autowired
+    private ContentOnboardingMapper contentOnboardingMapper;
+
+    @PostMapping("/onboard")
+    public ContentOnboardingDto startOnboarding(){
+        ContentOnboarding contentOnboarding = contentOnboardingService.startOnboarding();
+        return contentOnboardingMapper.entityToDto(contentOnboarding);
+    }
+
+    @PostMapping("/{onboardingId}/upload")
+    public ResponseEntity<ContentOnboardingDto> uploadContent(
+            @PathVariable String onboardingId,
+            @RequestParam("file") MultipartFile file) {
+        ContentOnboardingDto contentOnboardingDto = null;
+            try {
+                ContentOnboarding contentOnboarding = contentOnboardingService.uploadContentFile(onboardingId, file);
+                contentOnboardingDto = contentOnboardingMapper.entityToDto(contentOnboarding);
+            } catch (Exception e) {
+                return ResponseEntity.status(500).body(null);
+            }
+            return ResponseEntity.status(200).body(contentOnboardingDto);
+    }
+
+    @GetMapping("/{onboardingId}")
+    public Optional<ContentOnboarding> getOnboarding(@PathVariable String onboardingId) {
+        return contentOnboardingService.findById(onboardingId);
     }
 }

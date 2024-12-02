@@ -34,7 +34,7 @@ public class MinioService {
                             .contentType(file.getContentType())
                             .build()
             );
-            return "http://" + endpoint + "/" + bucketName + "/" + fileName;
+            return endpoint + "/" + bucketName + "/" + fileName;
         } catch (MinioException e) {
             throw new RuntimeException("Error occurred while uploading video: " + e.getMessage());
         }

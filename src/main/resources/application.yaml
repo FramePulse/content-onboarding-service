@@ -4,13 +4,14 @@ server:
 spring:
   application:
     name: content-onboarding-service
-  config:
-    import: optional:configserver:http://localhost:8888
 
   servlet:
     multipart:
       max-file-size: 1GB
       max-request-size: 1GB
+
+  config:
+    import: optional:configserver:http://localhost:8888
 
 minio:
   endpoint: http://localhost:9000 # MinIO URL

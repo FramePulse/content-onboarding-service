@@ -24,6 +24,8 @@ public class ContentOnboarding {
 
     private String tags;
 
+    private String storageUrl;
+
     private String createdBy;
 
     private String createdOn;

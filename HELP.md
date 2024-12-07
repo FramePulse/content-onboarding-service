@@ -36,6 +36,29 @@ Minio setup
 > docker pull minio/minio
 > docker run -p 9000:9000 -p 9001:9001 --name minio -e "MINIO_ROOT_USER=admin"   -e "MINIO_ROOT_PASSWORD=password123" -v C:\work\framepulse\storage\minio:/data -v C:\work\framepulse\storage\minio:/root/.minio minio/minio server /data --console-address ":9001"
 
+create new bucket videos 
+apply below custome policy
+`{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": "s3:GetObject",
+            "Resource": "arn:aws:s3:::videos/*"
+        },
+        {
+            "Effect": "Deny",
+            "Principal": "*",
+            "Action": ["s3:PutObject", "s3:DeleteObject"],
+            "Resource": "arn:aws:s3:::videos/*"
+        }
+    ]
+}`
+
+create access key same as given in properties file
+
+
 ----
 cassandra setup
 ----
@@ -75,6 +98,7 @@ framepulse.content_onboarding
     title TEXT,
     description TEXT,
     tags TEXT,
+    storageurl TEXT,
     createdby TEXT,
     createdon TEXT
 );

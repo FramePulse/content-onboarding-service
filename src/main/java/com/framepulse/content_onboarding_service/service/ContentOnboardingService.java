@@ -19,11 +19,12 @@ public class ContentOnboardingService extends AbstractCassandraService<ContentOn
     @Autowired
     private MinioService minioService;
 
-    public ContentOnboarding startOnboarding() {
-        ContentOnboarding contentOnboarding = new ContentOnboarding();
+    public ContentOnboarding startOnboarding(ContentOnboarding contentOnboarding) {
+        if (contentOnboarding == null) {
+            contentOnboarding = new ContentOnboarding();
+        }
         contentOnboarding.setId(UUID.randomUUID().toString());
         contentOnboarding.setStatus("NEW");
-        contentOnboarding.setContentId(UUID.randomUUID().toString());
         contentOnboarding = super.save(contentOnboarding);
 
         // TODO : update content by calling content service
@@ -35,10 +36,10 @@ public class ContentOnboardingService extends AbstractCassandraService<ContentOn
     public ContentOnboarding uploadContentFile(
             String onboardingId, MultipartFile file) throws Exception {
         Optional<ContentOnboarding> contentOnboarding = super.findById(onboardingId);
-        if(contentOnboarding.isPresent()) {
+        if (contentOnboarding.isPresent()) {
 
             //upload file
-            String fileUrl = minioService.uploadVideo(file);
+            String fileUrl = minioService.uploadVideo(onboardingId, file);
 
             // TODO : update file url in content by calling content service
             updateContent();
@@ -47,9 +48,18 @@ public class ContentOnboardingService extends AbstractCassandraService<ContentOn
             _contentOnboarding.setStatus("UPLOADED");
             super.update(_contentOnboarding);
 
+            pushToIncomingKafkaTopic(_contentOnboarding);
+
             return _contentOnboarding;
         }
         return null;
+    }
+
+    @Autowired
+    private KafkaProducer kafkaProducer;
+
+    private void pushToIncomingKafkaTopic(ContentOnboarding contentOnboarding) {
+        kafkaProducer.sendContentOnboarding(contentOnboarding);
     }
 
     private void updateContent() {

@@ -22,14 +22,14 @@ public class MinioService {
     @Value("${minio.endpoint}")
     private String endpoint;
 
-    public String uploadVideo(MultipartFile file) throws Exception {
+    public String uploadVideo(String onboardingId, MultipartFile file) throws Exception {
         String fileName = file.getOriginalFilename();
         try (InputStream inputStream = file.getInputStream()) {
             // Upload file to MinIO bucket
             minioClient.putObject(
                     PutObjectArgs.builder()
                             .bucket(bucketName)
-                            .object(fileName)
+                            .object(onboardingId)
                             .stream(inputStream, file.getSize(), -1)
                             .contentType(file.getContentType())
                             .build()

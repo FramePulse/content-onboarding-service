@@ -22,23 +22,21 @@ public class ContentOnboardingController {
     private ContentOnboardingMapper contentOnboardingMapper;
 
     @PostMapping("/onboard")
-    public ContentOnboardingDto startOnboarding(){
-        ContentOnboarding contentOnboarding = contentOnboardingService.startOnboarding();
+    public ContentOnboardingDto startOnboarding(@RequestBody ContentOnboardingDto contentOnboardingDto) {
+        ContentOnboarding contentOnboarding = contentOnboardingService.startOnboarding(contentOnboardingMapper.dtoToEntity(contentOnboardingDto));
         return contentOnboardingMapper.entityToDto(contentOnboarding);
     }
 
     @PostMapping("/{onboardingId}/upload")
     public ResponseEntity<ContentOnboardingDto> uploadContent(
             @PathVariable String onboardingId,
-            @RequestParam("file") MultipartFile file) {
+            @RequestParam("file") MultipartFile file) throws Exception {
         ContentOnboardingDto contentOnboardingDto = null;
-            try {
-                ContentOnboarding contentOnboarding = contentOnboardingService.uploadContentFile(onboardingId, file);
-                contentOnboardingDto = contentOnboardingMapper.entityToDto(contentOnboarding);
-            } catch (Exception e) {
-                return ResponseEntity.status(500).body(null);
-            }
-            return ResponseEntity.status(200).body(contentOnboardingDto);
+
+        ContentOnboarding contentOnboarding = contentOnboardingService.uploadContentFile(onboardingId, file);
+        contentOnboardingDto = contentOnboardingMapper.entityToDto(contentOnboarding);
+
+        return ResponseEntity.status(200).body(contentOnboardingDto);
     }
 
     @GetMapping("/{onboardingId}")

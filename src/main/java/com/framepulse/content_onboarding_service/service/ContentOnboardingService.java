@@ -41,10 +41,9 @@ public class ContentOnboardingService extends AbstractCassandraService<ContentOn
             //upload file
             String fileUrl = minioService.uploadVideo(onboardingId, file);
 
-            // TODO : update file url in content by calling content service
-            updateContent();
-
+            //update file url and status in content by calling content service
             ContentOnboarding _contentOnboarding = contentOnboarding.get();
+            _contentOnboarding.setStorageUrl(fileUrl);
             _contentOnboarding.setStatus("UPLOADED");
             super.update(_contentOnboarding);
 

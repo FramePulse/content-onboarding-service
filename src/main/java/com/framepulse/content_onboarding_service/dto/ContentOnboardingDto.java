@@ -19,6 +19,8 @@ public class ContentOnboardingDto {
 
     private String tags;
 
+    private String storageUrl;
+
     private String createdBy;
 
     private String createdOn;

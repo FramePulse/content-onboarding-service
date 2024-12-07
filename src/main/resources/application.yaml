@@ -10,6 +10,12 @@ spring:
       max-file-size: 1GB
       max-request-size: 1GB
 
+  kafka:
+    producer:
+      bootstrap-server: localhost:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: com.framepulse.content_onboarding_service.mapper.KafkaSerializer
+
   config:
     import: optional:configserver:http://localhost:8888
 
@@ -18,3 +24,4 @@ minio:
   access-key: IpdsZfiQYHdhiRCscYXM
   secret-key: 64O04OP0DTZJPkmsrZN9dobnVwtvGlfa1154wimp
   bucket: videos
+

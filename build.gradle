@@ -33,6 +33,7 @@ dependencies {
 	implementation 'com.framepulse:cassandra-common-lib:0.0.1-SNAPSHOT'
 
 	implementation("io.minio:minio:8.5.13")
+	implementation("org.springframework.kafka:spring-kafka")
 
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
